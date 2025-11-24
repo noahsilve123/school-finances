@@ -177,11 +177,8 @@ def normalize_scorecard_rows(rows):
     for record in rows:
         table.append({
             "School Name": record.get("school.name"),
-            "Also Known As": record.get("school.alias"),
             "City": record.get("school.city"),
             "Website": record.get("school.school_url"),
-            "IPEDS ID": record.get("id"),
-            "OPE8 ID": record.get("ope8_id"),
             "Enrollment": record.get("latest.student.size"),
             "Admission Rate (%)": _to_percent(record.get("latest.admissions.admission_rate.overall")),
             "Average SAT": _clean_number(record.get("latest.admissions.sat_scores.average.overall")),
@@ -195,7 +192,9 @@ def normalize_scorecard_rows(rows):
             "Other On-Campus Expenses": _clean_number(record.get("latest.cost.otherexpense.oncampus")),
             "Other Off-Campus w/Family": _clean_number(record.get("latest.cost.otherexpense.offcampus_with_family")),
             "Median Debt at Graduation": _clean_number(record.get("latest.aid.median_debt.completers.overall")),
-            "Median Earnings 10y After Entry": _clean_number(record.get("latest.earnings.10_yrs_after_entry.median"))
+            "Median Earnings 10y After Entry": _clean_number(record.get("latest.earnings.10_yrs_after_entry.median")),
+            "IPEDS ID": record.get("id"),
+            "OPE8 ID": record.get("ope8_id")
         })
     return table
 
