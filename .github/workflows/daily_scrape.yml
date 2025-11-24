@@ -1,0 +1,47 @@
+name: Daily NJ Financial Scrape
+
+# This defines WHEN the script runs
+on:
+  schedule:
+    # Runs every day at 8:00 AM UTC
+    - cron: '0 8 * * *'
+  # Allows you to click "Run Workflow" manually for testing
+  workflow_dispatch:
+
+jobs:
+  scrape-and-commit:
+    runs-on: ubuntu-latest
+    
+    # IMPORTANT: This gives the robot permission to save the file back to your repo
+    permissions:
+      contents: write
+
+    steps:
+      # Step 1: Download your code onto the robot
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      # Step 3: Install the libraries from your list
+      - name: Install libraries
+        run: |
+          pip install -r requirements.txt
+
+      # Step 4: Run the python script
+      - name: Run Scraper
+        run: python scrape_finances.py
+
+      # Step 5: Save the new CSV file back to GitHub
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "actions@github.com"
+          git add nj_school_finances.csv public_data_status.txt
+          # The '|| echo' part prevents the script from crashing if there are no new updates
+          git commit -m "Auto-update financial data" || echo "No new data to commit"
+          git push
