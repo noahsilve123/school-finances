@@ -41,7 +41,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Action Bot"
           git config --global user.email "actions@github.com"
-          git add nj_school_finances.csv public_data_status.txt
+          git add nj_school_finances.csv nj_college_costs.csv public_data_status.txt
           # The '|| echo' part prevents the script from crashing if there are no new updates
           git commit -m "Auto-update financial data" || echo "No new data to commit"
           git push
