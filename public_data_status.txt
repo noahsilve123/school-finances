@@ -1,4 +1,4 @@
-Last Checked: 2025-11-23 22:46:44.546907
+Last Checked: 2025-11-23 23:13:40.272099
 
-NOT RELEASED YET: https://www.nj.gov/education/guide/2025/excel/indicator1.xls (Status 404)
-NOT RELEASED YET: https://www.nj.gov/education/guide/2024/excel/indicator1.xls (Status 404)
+AVAILABLE: College Scorecard API (cost + admissions)
+AVAILABLE: ProPublica Nonprofit Explorer API
