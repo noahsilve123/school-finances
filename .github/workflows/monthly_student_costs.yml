@@ -24,8 +24,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run scraper
-        run: python scrape_finances.py
+   - name: Export Scorecard API key
+     run: echo "SCORECARD_API_KEY=${{ secrets.SCORECARD_API_KEY }}" >> $GITHUB_ENV
+
+   - name: Run Scraper
+     run: python scrape_finances.py
 
       - name: Commit updated data
         run: |
