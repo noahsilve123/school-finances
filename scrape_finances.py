@@ -44,6 +44,16 @@ SCORECARD_FIELDS = [
 SCORECARD_STATE = "NJ"
 SCORECARD_PAGE_SIZE = 100
 COLLEGE_COST_OUTPUT = "nj_college_costs.csv"
+COVERAGE_PRIORITY_COLUMNS = [
+    "Tuition (In State)",
+    "Tuition (Out of State)",
+    "Published Cost (Academic Year)",
+    "Average Net Price",
+    "Room & Board (On Campus)",
+    "Books & Supplies",
+    "Other On-Campus Expenses",
+    "Other Off-Campus w/Family"
+]
 
 def fetch_nonprofit_data(ein):
     url = f"https://projects.propublica.org/nonprofits/api/v2/organizations/{ein}.json"
@@ -199,6 +209,28 @@ def normalize_scorecard_rows(rows):
     return table
 
 
+def _coverage_label(score, max_score):
+    if score >= max_score - 1:
+        return "Comprehensive data"
+    if score >= 1:
+        return "Partial data"
+    return "Needs data"
+
+
+def prioritize_complete_records(df):
+    available_columns = [c for c in COVERAGE_PRIORITY_COLUMNS if c in df.columns]
+    if not available_columns:
+        return df.sort_values("School Name")
+
+    coverage_counts = df[available_columns].notna().sum(axis=1)
+    max_score = len(available_columns)
+    df["Data Coverage"] = coverage_counts.apply(lambda val: _coverage_label(val, max_score))
+    df["_coverage_score"] = coverage_counts
+    df = df.sort_values(["_coverage_score", "School Name"], ascending=[False, True]).reset_index(drop=True)
+    df.drop(columns=["_coverage_score"], inplace=True)
+    return df
+
+
 def collect_college_costs(state=SCORECARD_STATE, output_path=COLLEGE_COST_OUTPUT):
     """Build a student-focused cost-of-attendance CSV for all NJ colleges."""
     print(f"Fetching College Scorecard cost data for {state} institutions...")
@@ -208,7 +240,8 @@ def collect_college_costs(state=SCORECARD_STATE, output_path=COLLEGE_COST_OUTPUT
         return
 
     normalized = normalize_scorecard_rows(rows)
-    df = pd.DataFrame(normalized).sort_values("School Name")
+    df = pd.DataFrame(normalized)
+    df = prioritize_complete_records(df)
     df.to_csv(output_path, index=False)
     print(f"Saved student cost guide to {output_path} ({len(df)} schools).")
 
