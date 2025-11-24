@@ -33,8 +33,11 @@ jobs:
           pip install -r requirements.txt
 
       # Step 4: Run the python script
-      - name: Run Scraper
-        run: python scrape_finances.py
+   - name: Export Scorecard API key
+     run: echo "SCORECARD_API_KEY=${{ secrets.SCORECARD_API_KEY }}" >> $GITHUB_ENV
+
+   - name: Run Scraper
+     run: python scrape_finances.py
 
       # Step 5: Save the new CSV file back to GitHub
       - name: Commit and Push Changes
